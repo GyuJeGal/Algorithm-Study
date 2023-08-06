@@ -17,15 +17,16 @@ def countLessOrEquals(mid):
     return result
 
 
-left = 1
-right = int(N * N)
-result = 0
-while left <= right:
-    mid = int((left + right)/2)
-    if countLessOrEquals(mid) >= k:
-        right = mid - 1
-        result = mid
+low = 1
+high = int(N * N)
+while low + 1 < high:
+    mid = int((low + high)/2)
+    if countLessOrEquals(mid) < k:
+        low = mid
     else:
-        left = mid + 1
+        high = mid
 
-print(result)
+if countLessOrEquals(low) >= k:
+    print(low)
+else:
+    print(high)
