@@ -13,6 +13,7 @@ food = [[5] * N for _ in range(N)]
 plusFood = []
 # 나무 좌표
 trees = [[collections.deque() * N for _ in range(N)] for _ in range(N)]
+answer = M
 
 for _ in range(N):
     temp = list(map(int, input().split()))
@@ -22,8 +23,13 @@ for _ in range(M):
     x, y, z = map(int, input().split())
     trees[x - 1][y - 1].append(z)
 
-def spring_summer():
-    # 봄, 여름 진행
+for i in range(K):
+    if answer == 0:
+        break
+    # 가을에 나무를 생성할 좌표
+    createQue = collections.deque()
+
+    # 봄, 여름, 겨울 진행
     for j in range(N):
         for k in range(N):
             # 현재 좌표에 나무가 있을 때
@@ -34,6 +40,7 @@ def spring_summer():
                     if food[j][k] < trees[j][k][p]:
                         for _ in range(p, size):
                             food[j][k] += trees[j][k].pop() // 2
+                            answer -= 1
                         break
                     # 양분이 있을 경우, 나무 나이 +1
                     else:
@@ -41,27 +48,21 @@ def spring_summer():
                         food[j][k] -= trees[j][k][p]
                         # 나무 나이 +1
                         trees[j][k][p] += 1
+                        # 나무의 나이가 5의 배수인 경우, createQue에 추가
+                        if trees[j][k][p] % 5 == 0:
+                            createQue.append([j, k])
+                food[j][k] += plusFood[j][k]
 
-def fall_winter():
+            # 나무가 없을 때, 그냥 겨울 진행
+            else:
+                food[j][k] += plusFood[j][k]
     # 가을 진행
-    for j in range(N):
-        for k in range(N):
-            if trees[j][k]:
-                for p in range(len(trees[j][k])):
-                    if trees[j][k][p] % 5 == 0:
-                        for t in range(8):
-                            nx = j + dx[t]
-                            ny = k + dy[t]
-                            if 0 <= nx < N and 0 <= ny < N:
-                                trees[nx][ny].appendleft(1)
-            food[j][k] += plusFood[j][k]
+    while createQue:
+        x, y = createQue.popleft()
+        for j in range(8):
+            # 좌표 검사
+            if 0 <= x + dx[j] < N and 0 <= y + dy[j] < N:
+                trees[x + dx[j]][y + dy[j]].appendleft(1)
+                answer += 1
 
-for _ in range(K):
-    spring_summer()
-    fall_winter()
-
-answer = 0
-for i in range(N):
-    for j in range(N):
-        answer += len(trees[i][j])
 print(answer)
