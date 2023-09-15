@@ -59,16 +59,15 @@ public class Problem14567 {
 
             answer[cur] = curSemester;
 
-
             for (int j = 0; j < graph[cur].size(); j++) {
                 inDegree[graph[cur].get(j)]--;
+                // 연결된 정점의 진입차수가 0인 경우, 큐에 넣기
                 if (inDegree[graph[cur].get(j)] == 0) {
                     que.addLast(new Node(graph[cur].get(j), curSemester + 1));
                 }
             }
 
         }
-
 
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < N + 1; i++) {
